@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Hello! Welcome To The Contacts App!</h1>
+<table id="contacts">
+    <tr>
+        <th>Name</th>
+        <th>Email Address</th>
+        <th>Note</th>
+    </tr>
+</table>
+
+<p id="errorField"></p>
+<!-- Lets toggle this when the Add Contact button is clicked -->
+<div class="container">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" placeholder="Contact's Name">
+
+    <label for="emailAddress">Email Address</label>
+    <input type="text" id="emailAddress" name="emailAddress" placeholder="Contact's Email">
+
+    <label for="note">Note</label>
+    <textarea id="note" name="note" placeholder="Add a note about this person" style="height:200px"></textarea>
+
+    <input type="submit" value="Add Contact" onclick="addContact()">
+</div>
+
+<script>
+    function addContact() {
+        name = document.getElementById("name").value;
+        emailAddress = document.getElementById("emailAddress").value;
+        note = document.getElementById("note").value;
+        params = "name="+name+"&email_address="+emailAddress+"&note="+note
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "add_contact", true);
+        xhttp.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+        xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            addRow(name, emailAddress, note)
+          }
+        else if (this.readyState == 4 && this.status == 400) {
+            console.log("Bad Request")
+            errorField = document.getElementById("errorField")
+            errorField.innerHTML = this.response 
+        }
+        };
+        xhttp.send(params);
+    }
+
+    function addRow(name, emailAddress, note) {
+        var table = document.getElementById("contacts")
+        var row = table.insertRow(-1);
+
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+
+        cell1.innerHTML = name;
+        cell2.innerHTML = emailAddress;              
+        cell3.innerHTML = note;   
+        cell4.innerHTML = '<button onclick="deleteRowFromTable(this)">Delete Row</button>';
+
+        errorField = document.getElementById("errorField")
+        errorField.innerHTML = "" 
+    }
+
+    // Still Need to Implement Delete row function
+    // Currently it deletes from the top of the table
+    // Needs to delete by row Index
+    function deleteRowFromTable(element) {
+        var table = document.getElementById("contacts")
+        var idx = element.rowIndex;
+        console.log(idx)
+        table.deleteRow(idx + 2)
+    }
+    </script>
+</body>
+</html>
